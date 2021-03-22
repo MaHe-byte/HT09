@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import org.w3c.dom.Document;
@@ -20,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends AppCompatActivity {
     TheaterList TL = TheaterList.getInstance();
-    ArrayList<Theater> theaters = new ArrayList<Theater>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,21 +35,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        readTheaters();
+       TL.readXML();
+       ListView listview = findViewById(R.id.listview);
+
 
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
         ArrayAdapter<Theater> adapter =
-                new ArrayAdapter<Theater>(getApplicationContext(),  android.R.layout.simple_spinner_dropdown_item, theaters);
+                new ArrayAdapter<Theater>(getApplicationContext(),  android.R.layout.simple_spinner_dropdown_item, TL.getTheaterList());
         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ArrayAdapter<Movie> adapter2 =
+                        new ArrayAdapter<Movie>(getApplicationContext(),  android.R.layout.simple_list_item_1, TL.readXML2(position));
+
+                        listview.setAdapter(adapter2);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
 
-    public void readTheaters(){
-        TL.readXML(theaters);
-    }
 }
 
