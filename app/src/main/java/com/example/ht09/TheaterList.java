@@ -60,29 +60,58 @@ public class TheaterList {
 
     }
 
-    public ArrayList<Movie> readXML2(int j) {
+    public ArrayList<Movie> readXML2(int j,String date,int time1, int time2) {
         DocumentBuilder builder;
         String id = theaters.get(j).getId();
         ArrayList<Movie> movies = new ArrayList<Movie>();
 
         try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            String url = "https://www.finnkino.fi/xml/Schedule/?area="+id+"&dt=02.04.2021";
+            System.out.println(date);
+            String url = "https://www.finnkino.fi/xml/Schedule/?area="+id+"&dt="+date;
             Document doc = builder.parse(url);
             doc.getDocumentElement().normalize();
             System.out.println("Testi" + doc.getDocumentElement().getNodeName());
 
             NodeList nList = doc.getDocumentElement().getElementsByTagName("Show");
+            if (time1 == 250000) {
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node node = nList.item(i);
 
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
+                    if (node.getNodeType() == Node.ELEMENT_NODE) {
+                        Element element = (Element) node;
+                        movies.add(new Movie(element.getElementsByTagName("ID").item(0).getTextContent(), element.getElementsByTagName("Title").item(0).getTextContent(), element.getElementsByTagName("dttmShowStart").item(0).getTextContent()));
+                        totalmv++;
+                    }
 
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    Element element = (Element) node;
-                    movies.add(new Movie(element.getElementsByTagName("ID").item(0).getTextContent(), element.getElementsByTagName("Title").item(0).getTextContent(), element.getElementsByTagName("dttmShowStart").item(0).getTextContent()));
-                    totalmv++;
                 }
+            }
+            else {
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node node =nList.item(i);
+                    Element element = (Element) node;
+                    String date1 = element.getElementsByTagName("dttmShowStart").item(0).getTextContent();
+                    System.out.println(date1);
+                    String date2 = date1.substring(date1.length() - 8);
+                    System.out.println(date2);
+                    String date4 =date2.replace(":", "");
+                    System.out.println(date4);
+                    int date3 = Integer.parseInt(date4);
+                    if (date3 > time1){
+                        if(date3<time2){
+                            movies.add(new Movie(element.getElementsByTagName("ID").item(0).getTextContent(), element.getElementsByTagName("Title").item(0).getTextContent(), element.getElementsByTagName("dttmShowStart").item(0).getTextContent()));
+                            totalmv++;
+                        }
+                        else{
+                            continue;
+                        }
 
+                    }
+                    else{continue;}
+
+
+
+                }
             }
 
 

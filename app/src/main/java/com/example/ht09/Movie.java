@@ -5,6 +5,7 @@ public class Movie {
     String id;
     String date;
 
+
     public Movie (String id2, String name2, String date2){
         name = name2;
         id = id2;
@@ -18,7 +19,8 @@ public class Movie {
     public String getdate() {return date;}
 
     public String toString() {
-        return name +" "+ date;
+
+        return name +" "+date;
     }
 
 }
